@@ -173,3 +173,5 @@ module.exports = {
 - 新建一个 `routes\admin` 作为后台路由文件目录。
 - 新建后台文章路由 `routes\admin\articles.js` 。
 - 在 Apifox 中，get 请求，/admin/articles ，测试。
+## 查询文章详情
+- 在 Apifox 中，get 请求，/admin/articles/{id}，测试。
