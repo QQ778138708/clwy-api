@@ -54,3 +54,122 @@ module.exports = router;
 - 安装 `sequelize` 命令行工具，运行 `npm i -g sequelize-cli` 。
 - 安装项目依赖的 `sequelize` 包和对数据库支持依赖的 `mysql2` 。运行 `npm i sequelize mysql2` 。
 - 初始化项目，运行 `sequelize init` 。
+## 模型、迁移与种子
+### 数据库配置 config.json
+- 刚刚初始化项目后，`config/config.json` 是连接数据库的配置文件。
+- 配置好了，Node.js 项目会自动连接到数据库上。
+```json
+{
+  "development": {
+    "username": "clwy",
+    "password": "clwy1234",
+    "database": "clwy_api_development",
+    "host": "139.196.78.182",
+    "dialect": "mysql",
+    "timezone": "+08:00"
+  },
+  "test": {
+    "username": "root",
+    "password": null,
+    "database": "database_test",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  },
+  "production": {
+    "username": "root",
+    "password": null,
+    "database": "database_production",
+    "host": "127.0.0.1",
+    "dialect": "mysql"
+  }
+}
+
+```
+### 模型
+- 运行 `sequelize model:generate --name Article --attributes title:string,content:text
+` 。
+- 生成模型文件 `models\articles.js` ，添加了 `软删除` 代码。
+```javascript
+'use strict';
+const {
+    Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+    class Article extends Model {
+        /**
+         * Helper method for defining associations.
+         * This method is not a part of Sequelize lifecycle.
+         * The `models/index` file will call this method automatically.
+         */
+        static associate(models) {
+            // define association here
+        }
+    }
+    Article.init({
+        title: DataTypes.STRING,
+        content: DataTypes.TEXT
+    }, {
+        sequelize,
+        modelName: 'Article',
+        paranoid: true, // 开启软删除
+        timestamps: true, // 默认为 true，必须开启
+        deletedAt:'deletedAt',  // 可选，指定字段名，默认就是 ‘deletedAt’
+    });
+    return Article;
+};
+```
+### 迁移文件
+- 迁移文件 `migrations\20260508021505-create-article.js` 。添加了 `deletedAt` 字段，修改了字段 `id` 和 `title` 。给 `deletedAt` 添加索引 。
+```javascript
+'use strict';
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+    async up(queryInterface, Sequelize) {
+        await queryInterface.createTable('Articles', {
+            id: {
+                allowNull: false,
+                autoIncrement: true,
+                primaryKey: true,
+                type: Sequelize.INTEGER.UNSIGNED,
+            },
+            title: {
+                allowNull: false,
+                type: Sequelize.STRING
+            },
+            content: {
+                type: Sequelize.TEXT
+            },
+            createdAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
+            updatedAt: {
+                allowNull: false,
+                type: Sequelize.DATE
+            },
+            deletedAt: {
+                allowNull: true,
+                type: Sequelize.DATE
+            }
+        });
+
+        await queryInterface.addIndex('Articles', {
+            fields: ['deletedAt'],
+        })
+    },
+    async down(queryInterface, Sequelize) {
+        await queryInterface.dropTable('Articles');
+    }
+};
+```
+### 运行迁移
+- 运行 `sequelize db:migrate` 。
+- 在 `DBeaver` 中看到，表格 `Articles` 已经生成了。
+### 种子文件
+- 运行 `sequelize seed:generate --name article` 。
+- 修改种子文件，添加测试数据。
+- 运行种子文件，运行 `sequelize db:seed --seed 20260508051800-article.js` ，表 `Articles` 中就有数据了。
+## 查询文章列表
+- 新建一个 `routes\admin` 作为后台路由文件目录。
+- 新建后台文章路由 `routes\admin\articles.js` 。
+- 在 Apifox 中，get 请求，/admin/articles ，测试。

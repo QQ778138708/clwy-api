@@ -1,10 +1,11 @@
 {
   "development": {
-    "username": "root",
-    "password": null,
-    "database": "database_development",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "username": "clwy",
+    "password": "clwy1234",
+    "database": "clwy_api_development",
+    "host": "139.196.78.182",
+    "dialect": "mysql",
+    "timezone": "+08:00"
   },
   "test": {
     "username": "root",
