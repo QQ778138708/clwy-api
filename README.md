@@ -50,3 +50,7 @@ module.exports = router;
 ## 创建数据库
 ![](./images/添加mysql数据库（测试用）.png)
 - 使用 DBeaver 测试连接。
+## 使用 Sequelize ORM
+- 安装 `sequelize` 命令行工具，运行 `npm i -g sequelize-cli` 。
+- 安装项目依赖的 `sequelize` 包和对数据库支持依赖的 `mysql2` 。运行 `npm i sequelize mysql2` 。
+- 初始化项目，运行 `sequelize init` 。
