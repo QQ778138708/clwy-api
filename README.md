@@ -44,3 +44,9 @@ module.exports = router;
   }
 }
 ```
+## 安装 MySQL
+- 购买阿里云服务器，安装宝塔面板。
+- 安装 MySQL 5.7.44
+## 创建数据库
+![](./images/添加mysql数据库（测试用）.png)
+- 使用 DBeaver 测试连接。
