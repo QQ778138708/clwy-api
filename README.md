@@ -175,3 +175,206 @@ module.exports = {
 - 在 Apifox 中，get 请求，/admin/articles ，测试。
 ## 查询文章详情
 - 在 Apifox 中，get 请求，/admin/articles/{id}，测试。
+## 创建文章
+- 在 Apifox 中，post 请求，/admin/articles，测试。
+- Body 参数格式 `x-www-form-urlencoded`
+## 删除文章
+- 在 Apifox 中，delete 请求，/admin/articles/{id}，测试。
+## 更新文章
+- 在 Apifox 中，post 请求，/admin/articles/{id}，测试。
+- Body 参数格式 `x-www-form-urlencoded`
+## 模糊搜索
+- `const {Op} = require("sequelize");`
+## 数据分页
+```javascript
+router.get('/', async (req, res) => {
+    try {
+        const currentPage = parseInt(req.query.currentPage) || 1;
+        const pageSize = parseInt(req.query.pageSize) || 10;
+        const offset = (currentPage - 1) * pageSize;
+
+        const condition = {
+            where: {},
+            order: [['id', 'desc']],
+            limit: pageSize,
+            offset: offset,
+        };
+
+        const query = req.query;
+        if (query.title) {
+            condition.where.title = {[Op.like]: `%${query.title}%`};
+        }
+        const {count, rows} = await Article.findAndCountAll(condition)
+        res.json({
+            status: true,
+            message: '查询文章列表成功',
+            data: {
+                articles: rows,
+                pagination: {
+                    total: count,
+                    currentPage,
+                    pageSize
+                }
+            },
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: false,
+            message: '查询文章列表失败',
+            errors: [error.message]
+        })
+    }
+})
+```
+## 白名单过滤表单数据
+## 验证表单数据
+- 在模型中添加验证
+```javascript
+'use strict';
+const {
+    Model
+} = require('sequelize');
+module.exports = (sequelize, DataTypes) => {
+    class Article extends Model {
+        /**
+         * Helper method for defining associations.
+         * This method is not a part of Sequelize lifecycle.
+         * The `models/index` file will call this method automatically.
+         */
+        static associate(models) {
+            // define association here
+        }
+    }
+    Article.init({
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+            validate:{
+                notNull: {msg:'标题必须填写'},
+                notEmpty: {msg:'标题不能为空'},
+                len:{args:[2,45],msg:"标题的长度需要在 2 ~ 45 个字符之间"}
+            }
+        },
+        content: DataTypes.TEXT
+    }, {
+        sequelize,
+        modelName: 'Article',
+        paranoid: true, // 开启软删除
+        timestamps: true, // 默认为 true，必须开启
+        deletedAt:'deletedAt',  // 可选，指定字段名，默认就是 ‘deletedAt’
+    });
+    return Article;
+};
+```
+- title 字段为空，创建文章，响应 catch 到的错误。
+```javascript
+router.post('/', async (req, res) => {
+    try {
+        const body = filterBody(req);
+        const article = await Article.create(body);
+        res.status(201).json({
+            status: true,
+            message: "创建文章成功",
+            data: {article}
+        })
+    } catch (error) {
+        res.json(error);
+        // res.status(500).json({
+        //     status: false,
+        //     message: '创建文章失败',
+        //     errors: [error.message]
+        // })
+    }
+})
+```
+- 错误内容
+```json
+{
+    "name": "SequelizeValidationError",
+    "errors": [
+        {
+            "message": "标题不能为空",
+            "type": "Validation error",
+            "path": "title",
+            "value": "",
+            "origin": "FUNCTION",
+            "instance": {
+                "id": null,
+                "title": "",
+                "updatedAt": "2026-05-09T01:44:29.319Z",
+                "createdAt": "2026-05-09T01:44:29.319Z"
+            },
+            "validatorKey": "notEmpty",
+            "validatorName": "notEmpty",
+            "validatorArgs": [
+                {
+                    "msg": "标题不能为空"
+                }
+            ],
+            "original": {
+                "validatorName": "notEmpty",
+                "validatorArgs": [
+                    {
+                        "msg": "标题不能为空"
+                    }
+                ]
+            }
+        },
+        {
+            "message": "标题的长度需要在 2 ~ 45 个字符之间",
+            "type": "Validation error",
+            "path": "title",
+            "value": "",
+            "origin": "FUNCTION",
+            "instance": {
+                "id": null,
+                "title": "",
+                "updatedAt": "2026-05-09T01:44:29.319Z",
+                "createdAt": "2026-05-09T01:44:29.319Z"
+            },
+            "validatorKey": "len",
+            "validatorName": "len",
+            "validatorArgs": [
+                2,
+                45
+            ],
+            "original": {
+                "validatorName": "len",
+                "validatorArgs": [
+                    2,
+                    45
+                ]
+            }
+        }
+    ]
+}
+```
+- 显示错误信息
+```javascript
+router.post('/', async (req, res) => {
+    try {
+        const body = filterBody(req);
+        const article = await Article.create(body);
+        res.status(201).json({
+            status: true,
+            message: "创建文章成功",
+            data: {article}
+        })
+    } catch (error) {
+        if (error.name === 'SequelizeValidationError') {
+            const errors = error.errors.map(e => e.message);
+            res.status(400).json({
+                status: false,
+                message: '请求参数错误',
+                errors: errors
+            })
+        } else {
+            res.status(500).json({
+                status: false,
+                message: '创建文章失败',
+                errors: [error.message]
+            })
+        }
+    }
+})
+```
