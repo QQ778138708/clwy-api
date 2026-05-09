@@ -378,3 +378,14 @@ router.post('/', async (req, res) => {
     }
 })
 ```
+## 封装响应，优化代码
+## 一口气建好所有表
+### 分类表
+- `sequelize model:generate --name Category --attributes name:string,rank:integer`
+- 添加软删除。
+- 修改迁移文件。
+### 用户表
+- `sequelize model:generate --name User --attributes email:string,username:string,password:string,nickname:string,sex:tinyint,company:string,introduce:text,role:tinyint,avatar:string`
+- 添加软删除。
+- 修改迁移文件。
+- 
