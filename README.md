@@ -472,3 +472,9 @@ router.post("/", async (req, res) => {
 - `sequelize db:seed --seed 20260511013103-category`
 - 修改模型，增加验证。
 - 路由
+
+## 超简单的系统设置接口
+
+- `sequelize seed:generate --name setting`
+- `sequelize db:seed --seed 20260511051638-setting`
+- 路由
