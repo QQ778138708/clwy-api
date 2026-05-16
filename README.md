@@ -485,3 +485,10 @@ router.post("/", async (req, res) => {
 - `sequelize db:seed --seed 20260516044210-user`
 - 修改模型，增加验证。
 - 路由
+
+## 使用 bcryptjs 加密密码
+
+- 安装 `npm i bcryptjs` 。
+- 修改模型，增加密码加密。
+- 修改种子文件，在测试数据中添加密码加密。
+- 删除 `Users` 表中的数据, 然后重新运行种子文件。

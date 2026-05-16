@@ -1,4 +1,7 @@
 'use strict';
+
+const bcrypt = require('bcryptjs');
+
 const {
   Model
 } = require('sequelize');
@@ -47,6 +50,16 @@ module.exports = (sequelize, DataTypes) => {
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+      set(value) {
+        if (!value) {
+          throw new Error('密码必须填写');
+        }
+
+        if (value.length < 6 || value.length > 20) {
+          throw new Error('密码长度必须在6到20位之间');
+        }
+        this.setDataValue('password', bcrypt.hashSync(value, 10));
+      }
     },
     nickname: {
       type: DataTypes.STRING,

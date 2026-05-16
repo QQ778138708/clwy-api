@@ -65,17 +65,6 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.delete('/:id', async (req, res) => {
-    try {
-        const user = await getUser(req);
-        await user.destroy();
-
-        success(res, '用户删除成功');
-    } catch (error) {
-        failure(res, error);
-    }
-})
-
 router.put('/:id', async (req, res) => {
     try {
         const body = filterBody(req);
