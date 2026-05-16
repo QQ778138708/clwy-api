@@ -478,3 +478,10 @@ router.post("/", async (req, res) => {
 - `sequelize seed:generate --name setting`
 - `sequelize db:seed --seed 20260511051638-setting`
 - 路由
+
+## 用户管理接口
+
+- `sequelize seed:generate --name user`
+- `sequelize db:seed --seed 20260516044210-user`
+- 修改模型，增加验证。
+- 路由
