@@ -478,3 +478,28 @@ router.post("/", async (req, res) => {
 - `sequelize seed:generate --name setting`
 - `sequelize db:seed --seed 20260511051638-setting`
 - 路由
+
+## 用户管理接口
+
+- `sequelize seed:generate --name user`
+- `sequelize db:seed --seed 20260511053311-user`
+- 修改模型，增加验证。
+- 路由
+
+## 使用 bcryptjs 加密密码
+
+- `npm install bcryptjs`
+- 修改模型，增加密码加密。
+- 修改种子文件。
+- 清空用户表，重新运行种子文件。
+- 在 DBerver中，手动修改 `id`，测试接口。
+
+## 课程接口（关联模型）
+
+- `sequelize seed:generate --name course`
+- `sequelize db:seed --seed 20260511064148-course`
+- 修改模型，增加验证。
+- 路由
+- 关联模型
+- 对应表的关联设定
+- 孤儿记录问题
