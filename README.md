@@ -482,12 +482,17 @@ router.post("/", async (req, res) => {
 ## 用户管理接口
 
 - `sequelize seed:generate --name user`
+<<<<<<< HEAD
 - `sequelize db:seed --seed 20260511053311-user`
+=======
+- `sequelize db:seed --seed 20260516044210-user`
+>>>>>>> ad1fe32e805bea5e1aa448b80298f1aac67d56fa
 - 修改模型，增加验证。
 - 路由
 
 ## 使用 bcryptjs 加密密码
 
+<<<<<<< HEAD
 - `npm install bcryptjs`
 - 修改模型，增加密码加密。
 - 修改种子文件。
@@ -503,3 +508,9 @@ router.post("/", async (req, res) => {
 - 关联模型
 - 对应表的关联设定
 - 孤儿记录问题
+=======
+- 安装 `npm i bcryptjs` 。
+- 修改模型，增加密码加密。
+- 修改种子文件，在测试数据中添加密码加密。
+- 删除 `Users` 表中的数据, 然后重新运行种子文件。
+>>>>>>> ad1fe32e805bea5e1aa448b80298f1aac67d56fa
